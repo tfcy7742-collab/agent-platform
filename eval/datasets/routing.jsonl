@@ -1,0 +1,44 @@
+# 路由评测集（Agent 自主路由）
+#
+# 考察 Planner 能否在三个工具之间选对：
+#   knowledge_search —— 查文档里的信息
+#   trip_planner     —— 生成旅行行程
+#   send_email       —— 发送邮件（写操作，需人工确认）
+#
+# 注意：这些用例在 **离线规则路由** 与 **在线 LLM 路由** 下都会被跑一遍，
+# 两种模式的差异会体现在报告里（这正是"规则兜底 vs 模型决策"的价值对比）。
+#
+# 字段：
+#   expected_tool  期望调用的工具
+#   note           这条用例在考察什么（边界/易混淆点）
+
+# -------------------------- knowledge_search（10 条）--------------------------
+{"id": "rt001", "question": "年假有几天", "expected_tool": "knowledge_search", "note": "制度类直接命中"}
+{"id": "rt002", "question": "报销住宿标准是多少", "expected_tool": "knowledge_search", "note": "金额条款"}
+{"id": "rt003", "question": "保密义务要遵守多久", "expected_tool": "knowledge_search", "note": "条款类"}
+{"id": "rt004", "question": "接口返回 502 怎么排查", "expected_tool": "knowledge_search", "note": "运维类"}
+{"id": "rt005", "question": "云笔记支持多少条笔记", "expected_tool": "knowledge_search", "note": "产品需求类"}
+{"id": "rt006", "question": "数据备份保留多久", "expected_tool": "knowledge_search", "note": "运维类"}
+{"id": "rt007", "question": "迟到几次会扣全勤奖", "expected_tool": "knowledge_search", "note": "考勤类"}
+{"id": "rt008", "question": "公司什么时候发工资", "expected_tool": "knowledge_search", "note": "日期类"}
+{"id": "rt009", "question": "协作空间有哪几种角色", "expected_tool": "knowledge_search", "note": "枚举类"}
+{"id": "rt010", "question": "日志应该输出到哪里", "expected_tool": "knowledge_search", "note": "规范类"}
+
+# ---------------------------- trip_planner（7 条）-----------------------------
+{"id": "rt011", "question": "帮我规划北京三日游", "expected_tool": "trip_planner", "note": "典型旅行需求"}
+{"id": "rt012", "question": "想去成都玩四天，主要是美食", "expected_tool": "trip_planner", "note": "带偏好的旅行需求"}
+{"id": "rt013", "question": "给我安排一个上海两天的行程，预算 5000", "expected_tool": "trip_planner", "note": "带预算"}
+{"id": "rt014", "question": "西安有什么值得去的地方，帮我做个五天行程", "expected_tool": "trip_planner", "note": "先问景点再要行程，仍是规划意图"}
+{"id": "rt015", "question": "带父母去杭州玩三天，节奏慢一点", "expected_tool": "trip_planner", "note": "带同行人信息"}
+{"id": "rt016", "question": "帮我规划一次去厦门的旅行", "expected_tool": "trip_planner", "note": "非内置城市（走兜底数据）"}
+{"id": "rt017", "question": "三亚五日游怎么安排", "expected_tool": "trip_planner", "note": "口语句式"}
+
+# ------------------------------ 易混淆边界（8 条）-----------------------------
+{"id": "rt018", "question": "北京有哪些景点推荐", "expected_tool": "trip_planner", "note": "城市+景点，属规划范畴"}
+{"id": "rt019", "question": "今天北京的天气怎么样", "expected_tool": "decline", "note": "含城市名但问实时天气：知识库是静态文档、旅行工具也不能查实时天气，正确做法是说明能力边界而不是硬调工具"}
+{"id": "rt020", "question": "公司的年假规定和旅行请假冲突怎么办", "expected_tool": "knowledge_search", "note": "含'旅行'字样但本质是查制度"}
+{"id": "rt021", "question": "出差住宿标准是多少", "expected_tool": "knowledge_search", "note": "含'出差'但问的是报销制度"}
+{"id": "rt022", "question": "帮我发一封邮件给 hr@example.com，内容是年假申请", "expected_tool": "send_email", "note": "写操作，必须识别为邮件意图并触发人工确认"}
+{"id": "rt023", "question": "把这个季度的考勤统计发到 manager@example.com", "expected_tool": "send_email", "note": "邮件意图（注意：正文内容需要检索，但仍应先识别为邮件工具）"}
+{"id": "rt024", "question": "我的邮箱是 test@example.com", "expected_tool": "decline", "note": "只给邮箱没有发送动作：不该触发邮件工具，正确做法是询问用户要做什么"}
+{"id": "rt025", "question": "帮我规划一下这个季度的项目排期", "expected_tool": "decline", "note": "含'规划'但不是旅行规划：三个工具都做不了，正确做法是说明能力边界（易被误判为 trip_planner）"}

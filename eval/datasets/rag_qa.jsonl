@@ -1,0 +1,53 @@
+# 问答评测集（RAG）
+#
+# 依据 data/sample_docs/ 下的三份样例文档构建：
+#   员工手册.pdf / 员工手册.md（PDF 与 Markdown 双份，用于验证跨格式召回）
+#   云笔记产品需求文档.docx
+#   运维技术FAQ.md
+#
+# 字段说明：
+#   type          answerable=资料中有答案；unanswerable=资料中没有，必须拒答
+#   keywords      离线判分用的关键信息（数字/专有名词最有效）
+#   gold_sources  期望命中的文件名关键字（子串匹配）
+#   note          备注（说明这条用例在考察什么）
+#
+# 生成方式：人工逐条核对样例文档原文后编写，不是自动生成——
+# 金标来源错了，整份评测报告就没有意义。
+
+# ============================ 可回答问题（22 条）============================
+{"id": "qa001", "type": "answerable", "question": "年假有几天？", "expected_answer": "满一年不满十年 5 天，满十年不满二十年 10 天，满二十年 15 天", "keywords": ["年假", "5", "10", "15"], "gold_sources": ["员工手册"], "note": "分档条款，考察数字召回"}
+{"id": "qa002", "type": "answerable", "question": "年假可以结转到下一年吗？", "expected_answer": "当年未休完最多结转三天，须在次年三月三十一日前用完", "keywords": ["结转", "三天", "三月三十一日"], "gold_sources": ["员工手册"], "note": "条件类条款"}
+{"id": "qa003", "type": "answerable", "question": "病假需要提供什么证明？", "expected_answer": "二级以上医院开具的病假证明", "keywords": ["病假", "二级", "医院"], "gold_sources": ["员工手册"], "note": "关键限定词"}
+{"id": "qa004", "type": "answerable", "question": "病假期间工资怎么发？", "expected_answer": "按当地最低工资标准的百分之八十发放", "keywords": ["最低工资", "百分之八十", "80"], "gold_sources": ["员工手册"], "note": "百分比数字"}
+{"id": "qa005", "type": "answerable", "question": "事假一年最多能请多少天？", "expected_answer": "全年累计不超过十五天", "keywords": ["事假", "十五", "15"], "gold_sources": ["员工手册"], "note": "上限条款"}
+{"id": "qa006", "type": "answerable", "question": "报销住宿标准是多少？", "expected_answer": "一线城市每晚六百元，其他城市每晚四百元", "keywords": ["六百", "600", "四百", "400"], "gold_sources": ["员工手册"], "note": "双档金额"}
+{"id": "qa007", "type": "answerable", "question": "出差餐补每天多少钱？", "expected_answer": "每人每天一百元", "keywords": ["餐补", "一百", "100"], "gold_sources": ["员工手册"], "note": "单项金额"}
+{"id": "qa008", "type": "answerable", "question": "报销单要在多久内提交？", "expected_answer": "费用发生之日起三十日内", "keywords": ["三十", "30"], "gold_sources": ["员工手册"], "note": "时限条款"}
+{"id": "qa009", "type": "answerable", "question": "保密义务在离职后还要遵守多久？", "expected_answer": "劳动合同解除或终止后继续有效三年", "keywords": ["三年", "3"], "gold_sources": ["员工手册"], "note": "离职后义务"}
+{"id": "qa010", "type": "answerable", "question": "离职需要提前多久通知公司？", "expected_answer": "提前三十日书面通知；试用期提前三日", "keywords": ["三十", "30", "三日", "3"], "gold_sources": ["员工手册"], "note": "两种情形"}
+{"id": "qa011", "type": "answerable", "question": "迟到几次会扣全勤奖？", "expected_answer": "当月迟到累计三次及以上扣发全勤奖", "keywords": ["迟到", "三次", "3"], "gold_sources": ["员工手册"], "note": "考勤处罚"}
+{"id": "qa012", "type": "answerable", "question": "每月最多可以补卡几次？", "expected_answer": "每月补卡次数不超过三次", "keywords": ["补卡", "三次", "3"], "gold_sources": ["员工手册"], "note": "考勤规则"}
+{"id": "qa013", "type": "answerable", "question": "公司什么时候发工资？", "expected_answer": "每月十五日发放上月工资", "keywords": ["十五", "15"], "gold_sources": ["员工手册"], "note": "日期条款"}
+{"id": "qa014", "type": "answerable", "question": "试用期是多久？", "expected_answer": "试用期为三个月", "keywords": ["试用期", "三个月", "3"], "gold_sources": ["员工手册"], "note": "期限条款"}
+{"id": "qa015", "type": "answerable", "question": "云笔记 V2.0 的移动端离线编辑怎么同步？", "expected_answer": "恢复网络后自动同步，冲突时以最后修改时间为准并保留冲突副本", "keywords": ["离线", "同步", "冲突"], "gold_sources": ["云笔记"], "note": "产品需求，考察跨文档"}
+{"id": "qa016", "type": "answerable", "question": "云笔记支持多少条笔记？", "expected_answer": "单用户最多十万条笔记，单条最大一兆字节", "keywords": ["十万", "10万", "一兆"], "gold_sources": ["云笔记"], "note": "容量指标"}
+{"id": "qa017", "type": "answerable", "question": "检索接口的性能指标是多少？", "expected_answer": "检索接口 P95 响应不超过三百毫秒", "keywords": ["三百", "300", "P95"], "gold_sources": ["云笔记"], "note": "非功能需求"}
+{"id": "qa018", "type": "answerable", "question": "协作空间有哪几种角色？", "expected_answer": "管理员、编辑者、只读三种角色", "keywords": ["管理员", "编辑者", "只读"], "gold_sources": ["云笔记"], "note": "枚举型条款"}
+{"id": "qa019", "type": "answerable", "question": "接口返回 502 应该怎么排查？", "expected_answer": "先查反向代理日志确认上游存活，再看应用日志的启动异常与健康检查", "keywords": ["反向代理", "502", "健康检查"], "gold_sources": ["FAQ"], "note": "运维排查步骤"}
+{"id": "qa020", "type": "answerable", "question": "数据备份保留多久？", "expected_answer": "全量备份保留三十天，增量备份保留七天", "keywords": ["三十", "30", "七", "7"], "gold_sources": ["FAQ"], "note": "双周期"}
+{"id": "qa021", "type": "answerable", "question": "性能调优的常见顺序是什么？", "expected_answer": "加索引、减少 N+1 查询、引入缓存、读写分离，最后才分库分表", "keywords": ["索引", "缓存", "N+1"], "gold_sources": ["FAQ"], "note": "方法论"}
+{"id": "qa022", "type": "answerable", "question": "日志应该输出到哪里？", "expected_answer": "以 JSON 格式输出到标准输出，禁止写容器内文件", "keywords": ["JSON", "标准输出"], "gold_sources": ["FAQ"], "note": "规范条款"}
+
+# ============================ 应拒答问题（12 条）============================
+{"id": "qa101", "type": "unanswerable", "question": "公司 CEO 的生日是哪天？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "人名类个人信息，资料中不存在"}
+{"id": "qa102", "type": "unanswerable", "question": "今天北京的天气怎么样？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "实时信息，知识库不覆盖"}
+{"id": "qa103", "type": "unanswerable", "question": "2022 年世界杯冠军是哪支球队？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "通用常识，与知识库无关"}
+{"id": "qa104", "type": "unanswerable", "question": "红烧肉怎么做才好吃？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "生活类问题"}
+{"id": "qa105", "type": "unanswerable", "question": "帮我推荐几部好看的科幻电影", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "推荐类，无资料支撑"}
+{"id": "qa106", "type": "unanswerable", "question": "公司的股票代码是多少？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "看似职场相关但资料中没有"}
+{"id": "qa107", "type": "unanswerable", "question": "竞争对手的产品定价是多少？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "外部商业信息"}
+{"id": "qa108", "type": "unanswerable", "question": "公司去年营业额是多少？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "财务数据不在资料中"}
+{"id": "qa109", "type": "unanswerable", "question": "员工可以带宠物上班吗？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "制度未涉及"}
+{"id": "qa110", "type": "unanswerable", "question": "公司年会定在什么时候？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "活动安排不在资料中"}
+{"id": "qa111", "type": "unanswerable", "question": "怎么给猫剪指甲？", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "完全无关的常识问题"}
+{"id": "qa112", "type": "unanswerable", "question": "帮我写一段 Python 快速排序代码", "expected_answer": "根据现有资料，我无法回答这个问题", "gold_sources": [], "note": "代码生成，资料里只有命令行示例（易被字面命中）"}
